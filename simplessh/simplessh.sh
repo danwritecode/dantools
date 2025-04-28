@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Read servers from file
 SERVER_FILE="./servers.txt"
 
 if ! [ -f "$SERVER_FILE" ]; then
@@ -16,11 +15,8 @@ if [ -z "$SELECTED" ]; then
   exit 1
 fi
 
-# Extract user@host from the line
+# Extract user@host and a name for the window
 USER_HOST=$(echo "$SELECTED" | awk '{print $2}')
+WINDOW_NAME=$(echo "$SELECTED" | awk '{print $1}')
 
-# Optional: Name tmux session after server
-SESSION_NAME=$(echo "$SELECTED" | awk '{print $1}')
-
-# SSH and start/attach tmux session
-ssh "$USER_HOST" "tmux new -As $SESSION_NAME"
+tmux new-window -n "$WINDOW_NAME" "ssh $USER_HOST || read -p 'Press enter to close...'"
